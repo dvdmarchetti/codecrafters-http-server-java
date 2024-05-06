@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 
 public class Main {
     private static Pattern PATH_REGEX = Pattern.compile("(GET|POST) (\\S+) HTTP/1.1");
+    private static String OK = "HTTP/1.1 200 OK\r\n";
     private static String NOT_FOUND = "HTTP/1.1 404 Not found\r\n\r\n";
 
     public static void main(String[] args) {
@@ -30,7 +31,14 @@ public class Main {
 
             String path = matcher.group(2);
             if ("/".equals(path)) {
-                output.write("HTTP/1.1 200 OK\r\n\r\n".getBytes());
+                output.write(OK.getBytes());
+                output.write("\r\n".getBytes());
+            } else if (path.startsWith("/echo")) {
+                String param = path.replace("/echo/", "");
+                output.write(OK.getBytes());
+                output.write("Content-Type: text/plain\r\n".getBytes());
+                output.write(("Content-Length: " + param.length() + "\r\n\r\n").getBytes());
+                output.write(param.getBytes());
             } else {
                 output.write(NOT_FOUND.getBytes());
             }
