@@ -4,27 +4,35 @@ import model.HttpResponse;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class Main {
+
     public static void main(String[] args) {
-        ServerSocket serverSocket = null;
-        Socket clientSocket = null;
-
-        try {
-            serverSocket = new ServerSocket(4221);
+        try (
+                ThreadPoolExecutor pool = (ThreadPoolExecutor) Executors.newCachedThreadPool();
+                ServerSocket serverSocket = new ServerSocket(4221)
+        ) {
             serverSocket.setReuseAddress(true);
-            clientSocket = serverSocket.accept();
+            final Socket clientSocket = serverSocket.accept();
 
-            HttpRequestReader reader = new HttpRequestReader(new BufferedReader(new InputStreamReader(clientSocket.getInputStream())));
-            HttpRequest request = reader.read();
-            System.out.println(request);
+            pool.submit(() -> {
+                try {
+                    HttpRequestReader reader = new HttpRequestReader(new BufferedReader(new InputStreamReader(clientSocket.getInputStream())));
+                    HttpRequest request = reader.read();
+                    System.out.println(request);
 
-            HttpResponse response = new RouteMatcher().match(request);
+                    HttpResponse response = new RouteMatcher().match(request);
 
-            HttpRequestWriter writer = new HttpRequestWriter(clientSocket.getOutputStream());
-            writer.write(response);
+                    HttpRequestWriter writer = new HttpRequestWriter(clientSocket.getOutputStream());
+                    writer.write(response);
+                } catch (IOException e) {
+                    System.out.println("IOException during client handling: " + e.getMessage());
+                }
+            });
         } catch (IOException e) {
-            System.out.println("IOException: " + e.getMessage());
+            System.out.println("IOException during server startup: " + e.getMessage());
         }
     }
 }
