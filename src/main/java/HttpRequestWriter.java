@@ -17,7 +17,6 @@ public class HttpRequestWriter {
 
     public void write(HttpResponse response) throws IOException {
         writeLine(HTTP_VERSION + " " + response.getCode() + " " + response.getStatus());
-        writeLine("");
 
         Map<String, String> headers = new HashMap<>(response.getHeaders());
         if (response.getBody() != null) {
@@ -25,7 +24,7 @@ public class HttpRequestWriter {
             headers.putIfAbsent("Content-Length", String.valueOf(response.getBody().length()));
         }
 
-        for(Map.Entry<String, String> header : response.getHeaders().entrySet()) {
+        for(Map.Entry<String, String> header : headers.entrySet()) {
             writeHeader(header.getKey(), header.getValue());
         }
         writeLine("");
