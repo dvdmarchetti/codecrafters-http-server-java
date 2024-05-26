@@ -15,22 +15,24 @@ public class Main {
                 ServerSocket serverSocket = new ServerSocket(4221)
         ) {
             serverSocket.setReuseAddress(true);
-            final Socket clientSocket = serverSocket.accept();
 
-            pool.submit(() -> {
-                try {
-                    HttpRequestReader reader = new HttpRequestReader(new BufferedReader(new InputStreamReader(clientSocket.getInputStream())));
-                    HttpRequest request = reader.read();
-                    System.out.println(request);
+            while (true) {
+                final Socket clientSocket = serverSocket.accept();
+                pool.submit(() -> {
+                    try {
+                        HttpRequestReader reader = new HttpRequestReader(new BufferedReader(new InputStreamReader(clientSocket.getInputStream())));
+                        HttpRequest request = reader.read();
+                        System.out.println(request);
 
-                    HttpResponse response = new RouteMatcher().match(request);
+                        HttpResponse response = new RouteMatcher().match(request);
 
-                    HttpRequestWriter writer = new HttpRequestWriter(clientSocket.getOutputStream());
-                    writer.write(response);
-                } catch (IOException e) {
-                    System.out.println("IOException during client handling: " + e.getMessage());
-                }
-            });
+                        HttpRequestWriter writer = new HttpRequestWriter(clientSocket.getOutputStream());
+                        writer.write(response);
+                    } catch (IOException e) {
+                        System.out.println("IOException during client handling: " + e.getMessage());
+                    }
+                });
+            }
         } catch (IOException e) {
             System.out.println("IOException during server startup: " + e.getMessage());
         }
