@@ -28,15 +28,4 @@ public class HttpResponse {
                 .code(404)
                 .status("Not found");
     }
-
-    public static class HttpResponseBuilder {
-        private Map<String, String> headers;
-        private String body;
-
-        public HttpResponseBuilder body(String body) {
-            headers.putIfAbsent("Content-Type", "text/plain");
-            this.body = body;
-            return this;
-        }
-    }
 }

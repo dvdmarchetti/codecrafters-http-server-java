@@ -2,6 +2,7 @@ import model.HttpResponse;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.Map;
 
 public class HttpRequestWriter {
@@ -16,15 +17,20 @@ public class HttpRequestWriter {
 
     public void write(HttpResponse response) throws IOException {
         writeLine(HTTP_VERSION + " " + response.getCode() + " " + response.getStatus());
-        writeLine(EOL);
+        writeLine("");
+
+        Map<String, String> headers = new HashMap<>(response.getHeaders());
+        if (response.getBody() != null) {
+            headers.putIfAbsent("content-type", "text/plain");
+            headers.putIfAbsent("content-length", String.valueOf(response.getBody().length()));
+        }
 
         for(Map.Entry<String, String> header : response.getHeaders().entrySet()) {
             writeHeader(header.getKey(), header.getValue());
         }
+        writeLine("");
 
         if (response.getBody() != null) {
-            writeHeader("Content-Length", String.valueOf(response.getBody().length()));
-            writeLine(EOL);
             writeBody(response.getBody().getBytes());
         }
 
