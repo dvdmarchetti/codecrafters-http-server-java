@@ -35,8 +35,8 @@ public class RouteMatcher {
             return HttpResponse.ok().body(userAgent);
         }
 
-        if (path.startsWith("/file")) {
-            String param = path.replace("/file/", "");
+        if (path.startsWith("/files")) {
+            String param = path.replace("/files/", "");
 
             Path targetFile = basePath.resolve(param);
             if (!targetFile.toFile().exists()) {
