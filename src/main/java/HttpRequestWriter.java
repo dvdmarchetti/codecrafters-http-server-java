@@ -21,8 +21,8 @@ public class HttpRequestWriter {
 
         Map<String, String> headers = new HashMap<>(response.getHeaders());
         if (response.getBody() != null) {
-            headers.putIfAbsent("content-type", "text/plain");
-            headers.putIfAbsent("content-length", String.valueOf(response.getBody().length()));
+            headers.putIfAbsent("Content-Type", "text/plain");
+            headers.putIfAbsent("Content-Length", String.valueOf(response.getBody().length()));
         }
 
         for(Map.Entry<String, String> header : response.getHeaders().entrySet()) {
