@@ -26,6 +26,6 @@ public class HttpResponse {
     static public HttpResponseBuilder notFound() {
         return HttpResponse.builder()
                 .code(404)
-                .status("Not found");
+                .status("Not Found");
     }
 }
