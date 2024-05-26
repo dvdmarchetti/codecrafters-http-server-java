@@ -1,12 +1,24 @@
 import model.HttpRequest;
 import model.HttpResponse;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 public class RouteMatcher {
-    public HttpResponse match(HttpRequest request) {
+    private Path basePath;
+
+    public RouteMatcher(String basePath) {
+        this.basePath = Path.of(basePath);
+    }
+
+    public HttpResponse match(HttpRequest request) throws IOException {
         return getResponse(request).build();
     }
 
-    private HttpResponse.HttpResponseBuilder getResponse(HttpRequest request) {
+    private HttpResponse.HttpResponseBuilder getResponse(HttpRequest request) throws IOException {
         String path = request.getPath();
 
         if ("/".equals(path)) {
@@ -21,6 +33,20 @@ public class RouteMatcher {
         if (path.startsWith("/user-agent")) {
             String userAgent = request.getHeader("User-Agent");
             return HttpResponse.ok().body(userAgent);
+        }
+
+        if (path.startsWith("/file")) {
+            String param = path.replace("/file/", "");
+
+            Path targetFile = basePath.resolve(param);
+            if (!targetFile.toFile().exists()) {
+                return HttpResponse.notFound();
+            }
+
+            String contents = new String(Files.readAllBytes(targetFile));
+            return HttpResponse.ok()
+                    .header("Content-Type", "application/octet-stream")
+                    .body(contents);
         }
 
         return HttpResponse.notFound();

@@ -18,13 +18,15 @@ public class Main {
 
             while (true) {
                 final Socket clientSocket = serverSocket.accept();
+                final RouteMatcher routeMatcher = new RouteMatcher(args[1]);
+
                 pool.submit(() -> {
                     try {
                         HttpRequestReader reader = new HttpRequestReader(new BufferedReader(new InputStreamReader(clientSocket.getInputStream())));
                         HttpRequest request = reader.read();
                         System.out.println(request);
 
-                        HttpResponse response = new RouteMatcher().match(request);
+                        HttpResponse response = routeMatcher.match(request);
 
                         HttpRequestWriter writer = new HttpRequestWriter(clientSocket.getOutputStream());
                         writer.write(response);
