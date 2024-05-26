@@ -5,10 +5,13 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class RouteMatcher {
-    private Path basePath;
+    private final Path basePath;
+
+    public RouteMatcher() {
+        this.basePath = null;
+    }
 
     public RouteMatcher(String basePath) {
         this.basePath = Path.of(basePath);

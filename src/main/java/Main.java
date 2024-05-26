@@ -18,7 +18,12 @@ public class Main {
 
             while (true) {
                 final Socket clientSocket = serverSocket.accept();
-                final RouteMatcher routeMatcher = new RouteMatcher(args[1]);
+                final RouteMatcher routeMatcher;
+                if (args.length >= 2 && args[1] != null) {
+                    routeMatcher = new RouteMatcher(args[1]);
+                } else {
+                    routeMatcher = new RouteMatcher();
+                }
 
                 pool.submit(() -> {
                     try {
