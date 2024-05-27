@@ -21,7 +21,7 @@ public class ContentEncoderHttpResponseWriter implements HttpWriter {
     public void write(HttpRequest request, HttpResponse response) throws IOException {
         String requestedEncoding = fetchRequestEncoding(request);
         if (requestedEncoding != null) {
-            response.withHeader(HttpHeaders.CONTENT_ENCODING, requestedEncoding);
+            response.addHeader(HttpHeaders.CONTENT_ENCODING, requestedEncoding);
         }
 
         writer.write(request, response);

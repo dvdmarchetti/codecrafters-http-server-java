@@ -5,7 +5,6 @@ import org.github.dvdmarchetti.httpserver.enumeration.HttpStatus;
 
 import java.util.Map;
 
-@With
 @Value
 @Builder
 @ToString
@@ -15,8 +14,8 @@ public class HttpResponse {
     Map<String, String> headers;
     String body;
 
-    public void withHeader(String key, String value) {
-        //
+    public void addHeader(String key, String value) {
+        headers.put(key, value);
     }
 
     static public HttpResponseBuilder ok() {
