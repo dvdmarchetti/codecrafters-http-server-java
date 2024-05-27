@@ -1,5 +1,7 @@
 package org.github.dvdmarchetti.httpserver;
 
+import org.github.dvdmarchetti.httpserver.contract.HttpWriter;
+import org.github.dvdmarchetti.httpserver.decorator.ContentEncoderHttpResponseWriter;
 import org.github.dvdmarchetti.httpserver.model.HttpRequest;
 import org.github.dvdmarchetti.httpserver.model.HttpResponse;
 
@@ -26,7 +28,9 @@ public class HttpServer {
 
         HttpResponse response = routeMatcher.match(request);
 
-        HttpResponseWriter writer = new HttpResponseWriter(clientSocket.getOutputStream());
+        HttpWriter writer = new ContentEncoderHttpResponseWriter(
+                new HttpResponseWriter(clientSocket.getOutputStream())
+        );
         writer.write(request, response);
     }
 }
