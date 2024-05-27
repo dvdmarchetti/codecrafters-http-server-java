@@ -3,8 +3,11 @@ package org.github.dvdmarchetti.httpserver.model;
 import lombok.*;
 import org.github.dvdmarchetti.httpserver.enumeration.HttpStatus;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
+@With
 @Value
 @Builder
 @ToString
@@ -14,8 +17,11 @@ public class HttpResponse {
     Map<String, String> headers;
     String body;
 
-    public void addHeader(String key, String value) {
-        headers.put(key, value);
+    public HttpResponse withHeader(String key, String value) {
+        Map<String, String> newHeaders = new HashMap<>(headers);
+        newHeaders.put(key, value);
+
+        return this.withHeaders(Collections.unmodifiableMap(newHeaders));
     }
 
     static public HttpResponseBuilder ok() {
