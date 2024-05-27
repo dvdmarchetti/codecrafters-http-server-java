@@ -19,6 +19,6 @@ public class HttpRequest {
     String body;
 
     public String getHeader(String key) {
-        return headers.get(key.toLowerCase());
+        return headers.get(key);
     }
 }
