@@ -1,5 +1,6 @@
 package model;
 
+import enumeration.HttpStatus;
 import lombok.Builder;
 import lombok.Singular;
 import lombok.ToString;
@@ -11,21 +12,28 @@ import java.util.Map;
 @Builder
 @ToString
 public class HttpResponse {
-    Integer code;
-    String status;
+    HttpStatus status;
     @Singular
     Map<String, String> headers;
     String body;
 
     static public HttpResponseBuilder ok() {
         return HttpResponse.builder()
-                .code(200)
-                .status("OK");
+                .status(HttpStatus.OK);
+    }
+
+    static public HttpResponseBuilder created() {
+        return HttpResponse.builder()
+                .status(HttpStatus.CREATED);
     }
 
     static public HttpResponseBuilder notFound() {
         return HttpResponse.builder()
-                .code(404)
-                .status("Not Found");
+                .status(HttpStatus.NOT_FOUND);
+    }
+
+    public static HttpResponseBuilder internalServerError() {
+        return HttpResponse.builder()
+                .status(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

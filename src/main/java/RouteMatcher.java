@@ -1,7 +1,8 @@
+import enumeration.HttpHeaders;
+import enumeration.HttpMethod;
 import model.HttpRequest;
 import model.HttpResponse;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,23 +23,24 @@ public class RouteMatcher {
     }
 
     private HttpResponse.HttpResponseBuilder getResponse(HttpRequest request) throws IOException {
+        HttpMethod method = request.getMethod();
         String path = request.getPath();
 
-        if ("/".equals(path)) {
+        if (HttpMethod.GET.equals(method) && "/".equals(path)) {
             return HttpResponse.ok();
         }
 
-        if (path.startsWith("/echo")) {
+        if (HttpMethod.GET.equals(method) && path.startsWith("/echo")) {
             String param = path.replace("/echo/", "");
             return HttpResponse.ok().body(param);
         }
 
-        if (path.startsWith("/user-agent")) {
-            String userAgent = request.getHeader("User-Agent");
+        if (HttpMethod.GET.equals(method) && path.startsWith("/user-agent")) {
+            String userAgent = request.getHeader(HttpHeaders.USER_AGENT);
             return HttpResponse.ok().body(userAgent);
         }
 
-        if (path.startsWith("/files")) {
+        if (HttpMethod.GET.equals(method) && path.startsWith("/files")) {
             String param = path.replace("/files/", "");
 
             Path targetFile = basePath.resolve(param);
@@ -48,8 +50,20 @@ public class RouteMatcher {
 
             String contents = new String(Files.readAllBytes(targetFile));
             return HttpResponse.ok()
-                    .header("Content-Type", "application/octet-stream")
+                    .header(HttpHeaders.CONTENT_TYPE, "application/octet-stream")
                     .body(contents);
+        }
+
+        if (HttpMethod.POST.equals(method) && path.startsWith("/files")) {
+            String param = path.replace("/files/", "");
+
+            Path targetFile = basePath.resolve(param);
+            if (targetFile.toFile().exists()) {
+                return HttpResponse.internalServerError();
+            }
+
+            Files.write(targetFile, request.getBody().getBytes());
+            return HttpResponse.created();
         }
 
         return HttpResponse.notFound();

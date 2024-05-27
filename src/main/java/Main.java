@@ -16,25 +16,19 @@ public class Main {
         ) {
             serverSocket.setReuseAddress(true);
 
+            final HttpServer httpServer;
+            if (args.length >= 2 && args[1] != null) {
+                httpServer = new HttpServer(args[1]);
+            } else {
+                httpServer = new HttpServer();
+            }
+
             while (true) {
                 final Socket clientSocket = serverSocket.accept();
-                final RouteMatcher routeMatcher;
-                if (args.length >= 2 && args[1] != null) {
-                    routeMatcher = new RouteMatcher(args[1]);
-                } else {
-                    routeMatcher = new RouteMatcher();
-                }
 
                 pool.submit(() -> {
                     try {
-                        HttpRequestReader reader = new HttpRequestReader(new BufferedReader(new InputStreamReader(clientSocket.getInputStream())));
-                        HttpRequest request = reader.read();
-                        System.out.println(request);
-
-                        HttpResponse response = routeMatcher.match(request);
-
-                        HttpRequestWriter writer = new HttpRequestWriter(clientSocket.getOutputStream());
-                        writer.write(response);
+                        httpServer.accept(clientSocket);
                     } catch (IOException e) {
                         System.out.println("IOException during client handling: " + e.getMessage());
                     }

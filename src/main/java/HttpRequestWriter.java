@@ -1,3 +1,4 @@
+import enumeration.HttpHeaders;
 import model.HttpResponse;
 
 import java.io.IOException;
@@ -16,12 +17,12 @@ public class HttpRequestWriter {
     }
 
     public void write(HttpResponse response) throws IOException {
-        writeLine(HTTP_VERSION + " " + response.getCode() + " " + response.getStatus());
+        writeLine(HTTP_VERSION + " " + response.getStatus().getCode() + " " + response.getStatus().getDescription());
 
         Map<String, String> headers = new HashMap<>(response.getHeaders());
         if (response.getBody() != null) {
-            headers.putIfAbsent("Content-Type", "text/plain");
-            headers.putIfAbsent("Content-Length", String.valueOf(response.getBody().length()));
+            headers.putIfAbsent(HttpHeaders.CONTENT_TYPE, "text/plain");
+            headers.putIfAbsent(HttpHeaders.CONTENT_LENGTH, String.valueOf(response.getBody().length()));
         }
 
         for(Map.Entry<String, String> header : headers.entrySet()) {

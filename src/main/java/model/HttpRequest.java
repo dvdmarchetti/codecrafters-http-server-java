@@ -1,5 +1,6 @@
 package model;
 
+import enumeration.HttpMethod;
 import lombok.Builder;
 import lombok.Singular;
 import lombok.ToString;
@@ -11,7 +12,7 @@ import java.util.Map;
 @Builder
 @ToString
 public class HttpRequest {
-    String method;
+    HttpMethod method;
     String path;
     @Singular
     Map<String, String> headers;

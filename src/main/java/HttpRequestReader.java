@@ -1,3 +1,5 @@
+import enumeration.HttpHeaders;
+import enumeration.HttpMethod;
 import exception.InvalidHttpRequestException;
 import model.HttpRequest;
 
@@ -27,7 +29,7 @@ public class HttpRequestReader {
         final String requestBody = parseRequestBody(headers);
 
         return HttpRequest.builder()
-                .method(requestLineMatcher.group(1))
+                .method(HttpMethod.valueOf(requestLineMatcher.group(1)))
                 .path(requestLineMatcher.group(2))
                 .headers(headers)
                 .body(requestBody)
@@ -40,34 +42,21 @@ public class HttpRequestReader {
         String line;
         while ((line = reader.readLine()) != null && !line.isEmpty()) {
             String[] header = line.split(": ");
-            headers.put(header[0].toLowerCase(), header[1]);
+            headers.put(header[0], header[1]);
         }
 
         return headers;
     }
 
     private String parseRequestBody(Map<String, String> headers) throws IOException {
-        if (!headers.containsKey("Content-Length")) {
+        if (!headers.containsKey(HttpHeaders.CONTENT_LENGTH)) {
             return null;
         }
 
-        int maxLength = Integer.parseInt(headers.get("Content-Length"));
-        char[] messageByte = new char[maxLength];
-
-        boolean end = false;
+        int maxLength = Integer.parseInt(headers.get(HttpHeaders.CONTENT_LENGTH));
         StringBuilder body = new StringBuilder(maxLength);
-        int totalBytesRead = 0;
-        while (!end) {
-            int currentBytesRead = reader.read(messageByte);
-            totalBytesRead = currentBytesRead + totalBytesRead;
-            if (totalBytesRead <= maxLength) {
-                body.append(new String(messageByte, 0, currentBytesRead));
-            } else {
-                body.append(new String(messageByte, 0, maxLength - totalBytesRead + currentBytesRead));
-            }
-            if (body.length() >= maxLength) {
-                end = true;
-            }
+        while (reader.ready()) {
+            body.append((char) reader.read());
         }
 
         return body.toString();
