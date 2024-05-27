@@ -1,13 +1,11 @@
-package model;
+package org.github.dvdmarchetti.httpserver.model;
 
-import enumeration.HttpStatus;
-import lombok.Builder;
-import lombok.Singular;
-import lombok.ToString;
-import lombok.Value;
+import lombok.*;
+import org.github.dvdmarchetti.httpserver.enumeration.HttpStatus;
 
 import java.util.Map;
 
+@With
 @Value
 @Builder
 @ToString
@@ -16,6 +14,10 @@ public class HttpResponse {
     @Singular
     Map<String, String> headers;
     String body;
+
+    public void withHeader(String key, String value) {
+        //
+    }
 
     static public HttpResponseBuilder ok() {
         return HttpResponse.builder()

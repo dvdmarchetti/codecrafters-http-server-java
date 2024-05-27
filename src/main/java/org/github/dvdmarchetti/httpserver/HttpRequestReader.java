@@ -1,7 +1,9 @@
-import enumeration.HttpHeaders;
-import enumeration.HttpMethod;
-import exception.InvalidHttpRequestException;
-import model.HttpRequest;
+package org.github.dvdmarchetti.httpserver;
+
+import org.github.dvdmarchetti.httpserver.enumeration.HttpHeaders;
+import org.github.dvdmarchetti.httpserver.enumeration.HttpMethod;
+import org.github.dvdmarchetti.httpserver.exception.InvalidHttpRequestException;
+import org.github.dvdmarchetti.httpserver.model.HttpRequest;
 
 import java.io.BufferedReader;
 import java.io.IOException;

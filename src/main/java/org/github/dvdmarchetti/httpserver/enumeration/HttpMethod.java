@@ -1,4 +1,4 @@
-package enumeration;
+package org.github.dvdmarchetti.httpserver.enumeration;
 
 public enum HttpMethod {
     GET,

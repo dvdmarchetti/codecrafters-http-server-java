@@ -1,4 +1,4 @@
-package enumeration;
+package org.github.dvdmarchetti.httpserver.enumeration;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

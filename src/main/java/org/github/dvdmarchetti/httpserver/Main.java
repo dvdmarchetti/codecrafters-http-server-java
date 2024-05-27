@@ -1,5 +1,4 @@
-import model.HttpRequest;
-import model.HttpResponse;
+package org.github.dvdmarchetti.httpserver;
 
 import java.io.*;
 import java.net.ServerSocket;

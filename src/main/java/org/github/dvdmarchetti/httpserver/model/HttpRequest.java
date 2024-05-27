@@ -1,6 +1,6 @@
-package model;
+package org.github.dvdmarchetti.httpserver.model;
 
-import enumeration.HttpMethod;
+import org.github.dvdmarchetti.httpserver.enumeration.HttpMethod;
 import lombok.Builder;
 import lombok.Singular;
 import lombok.ToString;

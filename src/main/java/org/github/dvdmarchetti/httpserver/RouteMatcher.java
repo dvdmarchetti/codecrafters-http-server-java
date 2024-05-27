@@ -1,7 +1,9 @@
-import enumeration.HttpHeaders;
-import enumeration.HttpMethod;
-import model.HttpRequest;
-import model.HttpResponse;
+package org.github.dvdmarchetti.httpserver;
+
+import org.github.dvdmarchetti.httpserver.enumeration.HttpHeaders;
+import org.github.dvdmarchetti.httpserver.enumeration.HttpMethod;
+import org.github.dvdmarchetti.httpserver.model.HttpRequest;
+import org.github.dvdmarchetti.httpserver.model.HttpResponse;
 
 import java.io.IOException;
 import java.nio.file.Files;

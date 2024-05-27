@@ -1,5 +1,7 @@
-import model.HttpRequest;
-import model.HttpResponse;
+package org.github.dvdmarchetti.httpserver;
+
+import org.github.dvdmarchetti.httpserver.model.HttpRequest;
+import org.github.dvdmarchetti.httpserver.model.HttpResponse;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,7 +26,7 @@ public class HttpServer {
 
         HttpResponse response = routeMatcher.match(request);
 
-        HttpRequestWriter writer = new HttpRequestWriter(clientSocket.getOutputStream());
-        writer.write(response);
+        HttpResponseWriter writer = new HttpResponseWriter(clientSocket.getOutputStream());
+        writer.write(request, response);
     }
 }
