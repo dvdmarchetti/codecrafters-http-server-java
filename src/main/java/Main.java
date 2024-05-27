@@ -1,4 +1,4 @@
-package org.github.dvdmarchetti.httpserver;
+import org.github.dvdmarchetti.httpserver.HttpServer;
 
 import java.io.*;
 import java.net.ServerSocket;
