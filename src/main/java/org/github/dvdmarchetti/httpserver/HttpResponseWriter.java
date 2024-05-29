@@ -26,7 +26,6 @@ public class HttpResponseWriter implements HttpWriter {
         Map<String, String> headers = new HashMap<>(response.getHeaders());
         if (response.getBody() != null) {
             headers.putIfAbsent(HttpHeaders.CONTENT_TYPE, "text/plain");
-            headers.putIfAbsent(HttpHeaders.CONTENT_LENGTH, String.valueOf(response.getBody().length()));
         }
 
         for(Map.Entry<String, String> header : headers.entrySet()) {
@@ -35,7 +34,7 @@ public class HttpResponseWriter implements HttpWriter {
         writeLine("");
 
         if (response.getBody() != null) {
-            writeBody(response.getBody().getBytes());
+            writeBody(response.getBody());
         }
 
         outputStream.flush();

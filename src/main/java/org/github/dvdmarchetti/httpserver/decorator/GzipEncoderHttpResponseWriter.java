@@ -6,14 +6,13 @@ import org.github.dvdmarchetti.httpserver.enumeration.HttpHeaders;
 import org.github.dvdmarchetti.httpserver.model.HttpRequest;
 import org.github.dvdmarchetti.httpserver.model.HttpResponse;
 
-import java.io.IOException;
-import java.util.Arrays;
+import java.io.*;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.zip.DeflaterOutputStream;
 
 @RequiredArgsConstructor
-public class ContentEncoderHttpResponseWriter implements HttpWriter {
+public class GzipEncoderHttpResponseWriter implements HttpWriter {
     static private final Set<String> ACCEPTED_ENCODINGS = Set.of("gzip");
 
     private final HttpWriter writer;
@@ -21,8 +20,8 @@ public class ContentEncoderHttpResponseWriter implements HttpWriter {
     @Override
     public void write(HttpRequest request, HttpResponse response) throws IOException {
         List<String> requestedEncoding = extractRequestEncodings(request);
-        if (requestedEncoding != null && !requestedEncoding.isEmpty()) {
-            response = response.withHeader(HttpHeaders.CONTENT_ENCODING, requestedEncoding.getFirst());
+        if (!requestedEncoding.isEmpty()) {
+            response = compress(requestedEncoding.getFirst(), response);
         }
 
         writer.write(request, response);
@@ -37,5 +36,15 @@ public class ContentEncoderHttpResponseWriter implements HttpWriter {
         return encodings.stream()
                 .filter(ACCEPTED_ENCODINGS::contains)
                 .toList();
+    }
+
+    private HttpResponse compress(String method, HttpResponse response) throws IOException {
+        ByteArrayOutputStream gzippedBody = new ByteArrayOutputStream();
+        OutputStream out = new DeflaterOutputStream(gzippedBody);
+        out.write(response.getBody());
+        out.close();
+
+        return response.withHeader(HttpHeaders.CONTENT_ENCODING, method)
+                .withBody(gzippedBody.toByteArray());
     }
 }

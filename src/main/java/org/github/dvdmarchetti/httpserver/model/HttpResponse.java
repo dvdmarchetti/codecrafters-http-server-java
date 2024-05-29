@@ -1,6 +1,7 @@
 package org.github.dvdmarchetti.httpserver.model;
 
 import lombok.*;
+import org.github.dvdmarchetti.httpserver.enumeration.HttpHeaders;
 import org.github.dvdmarchetti.httpserver.enumeration.HttpStatus;
 
 import java.util.Collections;
@@ -15,13 +16,24 @@ public class HttpResponse {
     HttpStatus status;
     @Singular
     Map<String, String> headers;
-    String body;
+    byte[] body;
 
     public HttpResponse withHeader(String key, String value) {
         Map<String, String> newHeaders = new HashMap<>(headers);
         newHeaders.put(key, value);
 
         return this.withHeaders(Collections.unmodifiableMap(newHeaders));
+    }
+
+    static public class HttpResponseBuilder {
+        private byte[] body;
+
+        public HttpResponseBuilder body(String body) {
+            header(HttpHeaders.CONTENT_LENGTH, String.valueOf(body.length()));
+            this.body = body.getBytes();
+
+            return this;
+        }
     }
 
     static public HttpResponseBuilder ok() {
@@ -39,7 +51,7 @@ public class HttpResponse {
                 .status(HttpStatus.NOT_FOUND);
     }
 
-    public static HttpResponseBuilder internalServerError() {
+    static public HttpResponseBuilder internalServerError() {
         return HttpResponse.builder()
                 .status(HttpStatus.INTERNAL_SERVER_ERROR);
     }
