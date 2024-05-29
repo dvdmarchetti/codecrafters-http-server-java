@@ -35,7 +35,7 @@ public class HttpResponseWriter implements HttpWriter {
         writeLine("");
 
         if (response.getBody() != null) {
-            writeBody(response.getBody().getBytes(StandardCharsets.UTF_8));
+            writeBody(response.getBody());
         }
 
         outputStream.flush();

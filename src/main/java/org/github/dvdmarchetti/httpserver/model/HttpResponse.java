@@ -17,7 +17,7 @@ public class HttpResponse {
     HttpStatus status;
     @Singular
     Map<String, String> headers;
-    String body;
+    byte[] body;
 
     public HttpResponse withHeader(String key, String value) {
         Map<String, String> newHeaders = new HashMap<>(headers);
@@ -27,10 +27,17 @@ public class HttpResponse {
     }
 
     static public class HttpResponseBuilder {
-        private String body;
+        private byte[] body;
 
         public HttpResponseBuilder body(String body) {
             header(HttpHeaders.CONTENT_LENGTH, String.valueOf(body.length()));
+            this.body = body.getBytes();
+
+            return this;
+        }
+
+        public HttpResponseBuilder body(byte[] body) {
+            header(HttpHeaders.CONTENT_LENGTH, String.valueOf(body.length));
             this.body = body;
 
             return this;
