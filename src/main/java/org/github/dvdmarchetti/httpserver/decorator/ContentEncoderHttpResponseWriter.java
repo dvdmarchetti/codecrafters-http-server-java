@@ -8,31 +8,34 @@ import org.github.dvdmarchetti.httpserver.model.HttpResponse;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class ContentEncoderHttpResponseWriter implements HttpWriter {
-    static private final String[] ACCEPTED_ENCODINGS = {
-            "gzip"
-    };
+    static private final Set<String> ACCEPTED_ENCODINGS = Set.of("gzip");
 
     private final HttpWriter writer;
 
     @Override
     public void write(HttpRequest request, HttpResponse response) throws IOException {
-        String requestedEncoding = fetchRequestEncoding(request);
-        if (requestedEncoding != null) {
-            response = response.withHeader(HttpHeaders.CONTENT_ENCODING, requestedEncoding);
+        List<String> requestedEncoding = extractRequestEncodings(request);
+        if (requestedEncoding != null && !requestedEncoding.isEmpty()) {
+            response = response.withHeader(HttpHeaders.CONTENT_ENCODING, requestedEncoding.getFirst());
         }
 
         writer.write(request, response);
     }
 
-    private String fetchRequestEncoding(HttpRequest request) {
-        String encoding = request.getHeader(HttpHeaders.ACCEPT_ENCODING);
-        if (encoding != null && Arrays.asList(ACCEPTED_ENCODINGS).contains(encoding)) {
-            return encoding;
+    private List<String> extractRequestEncodings(HttpRequest request) {
+        String encodings = request.getHeader(HttpHeaders.ACCEPT_ENCODING);
+        if (encodings == null) {
+            return null;
         }
 
-        return null;
+        return Arrays.stream(encodings.split(" "))
+                .filter(ACCEPTED_ENCODINGS::contains)
+                .collect(Collectors.toList());
     }
 }
