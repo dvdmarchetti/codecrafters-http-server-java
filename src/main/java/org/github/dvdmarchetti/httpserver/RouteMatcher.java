@@ -38,7 +38,7 @@ public class RouteMatcher {
         }
 
         if (HttpMethod.GET.equals(method) && path.startsWith("/user-agent")) {
-            String userAgent = request.getHeader(HttpHeaders.USER_AGENT);
+            String userAgent = request.getFirstHeaderValue(HttpHeaders.USER_AGENT);
             return HttpResponse.ok().body(userAgent);
         }
 

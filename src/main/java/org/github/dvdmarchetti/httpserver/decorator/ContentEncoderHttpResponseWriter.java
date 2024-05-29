@@ -29,13 +29,13 @@ public class ContentEncoderHttpResponseWriter implements HttpWriter {
     }
 
     private List<String> extractRequestEncodings(HttpRequest request) {
-        String encodings = request.getHeader(HttpHeaders.ACCEPT_ENCODING);
+        List<String> encodings = request.getHeader(HttpHeaders.ACCEPT_ENCODING);
         if (encodings == null) {
-            return null;
+            return List.of();
         }
 
-        return Arrays.stream(encodings.split(" "))
+        return encodings.stream()
                 .filter(ACCEPTED_ENCODINGS::contains)
-                .collect(Collectors.toList());
+                .toList();
     }
 }
