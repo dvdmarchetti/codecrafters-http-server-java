@@ -7,9 +7,12 @@ import org.github.dvdmarchetti.httpserver.model.HttpRequest;
 import org.github.dvdmarchetti.httpserver.model.HttpResponse;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.zip.DeflaterOutputStream;
+import java.util.zip.GZIPOutputStream;
 
 @RequiredArgsConstructor
 public class GzipEncoderHttpResponseWriter implements HttpWriter {
@@ -39,12 +42,18 @@ public class GzipEncoderHttpResponseWriter implements HttpWriter {
     }
 
     private HttpResponse compress(String method, HttpResponse response) throws IOException {
-        ByteArrayOutputStream gzippedBody = new ByteArrayOutputStream();
-        OutputStream out = new DeflaterOutputStream(gzippedBody);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        GZIPOutputStream gzip = new GZIPOutputStream(baos);
+        OutputStreamWriter out = new OutputStreamWriter(gzip, StandardCharsets.UTF_8);
         out.write(response.getBody());
         out.close();
 
-        return response.withHeader(HttpHeaders.CONTENT_ENCODING, method)
-                .withBody(gzippedBody.toByteArray());
+        return HttpResponse.builder()
+                .status(response.getStatus())
+                .headers(response.getHeaders())
+                .header(HttpHeaders.CONTENT_ENCODING, method)
+                .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(baos.size()))
+                .body(baos.toString())
+                .build();
     }
 }

@@ -7,6 +7,7 @@ import org.github.dvdmarchetti.httpserver.model.HttpResponse;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,7 +35,7 @@ public class HttpResponseWriter implements HttpWriter {
         writeLine("");
 
         if (response.getBody() != null) {
-            writeBody(response.getBody());
+            writeBody(response.getBody().getBytes(StandardCharsets.UTF_8));
         }
 
         outputStream.flush();

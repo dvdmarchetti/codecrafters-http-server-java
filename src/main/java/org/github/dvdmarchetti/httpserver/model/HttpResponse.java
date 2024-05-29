@@ -4,6 +4,7 @@ import lombok.*;
 import org.github.dvdmarchetti.httpserver.enumeration.HttpHeaders;
 import org.github.dvdmarchetti.httpserver.enumeration.HttpStatus;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +17,7 @@ public class HttpResponse {
     HttpStatus status;
     @Singular
     Map<String, String> headers;
-    byte[] body;
+    String body;
 
     public HttpResponse withHeader(String key, String value) {
         Map<String, String> newHeaders = new HashMap<>(headers);
@@ -26,11 +27,11 @@ public class HttpResponse {
     }
 
     static public class HttpResponseBuilder {
-        private byte[] body;
+        private String body;
 
         public HttpResponseBuilder body(String body) {
             header(HttpHeaders.CONTENT_LENGTH, String.valueOf(body.length()));
-            this.body = body.getBytes();
+            this.body = body;
 
             return this;
         }
